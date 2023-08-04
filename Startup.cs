@@ -10,6 +10,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static testCustomerService.Business;
+using static testCustomerService.Core;
+using static testCustomerService.DataAccess;
 using static testCustomerService.Program;
 
 namespace testCustomerService
@@ -68,7 +71,7 @@ namespace testCustomerService
 
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<CustomerContext>(options =>
+            services.AddDbContext<CustomerDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString(@"Server=.\SQLEXPRESS;Database=dbCustomer;Trusted_Connection=True;")));
 
             services.AddControllers();
@@ -77,6 +80,10 @@ namespace testCustomerService
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Customer API", Version = "v1" });
             });
+
+            // Register services for dependency injection
+            services.AddScoped<ICustomerService, CustomerService>();
+            services.AddScoped<ICustomerRepository, CustomerRepository>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
